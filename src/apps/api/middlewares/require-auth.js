@@ -1,10 +1,8 @@
 function requireAuth (req, res, next) {
-  var unautorized = !req.session.user ||
-                    req.headers.authorization !== req.session.user.token
-  if(unautorized) {
+  if(req.headers.authorization) {
     res.json({
       'message': 'Authentication failed '
-    }, 401);
+    }, 403);
   } else {
     next();
   }

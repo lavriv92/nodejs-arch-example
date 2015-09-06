@@ -1,5 +1,4 @@
 var express = require('express');
-var session = require('express-session');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 
@@ -18,11 +17,6 @@ var app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(session({
-  secret: '123456789',
-  resave: true,
-  saveUninitialized: true
-}));
 app.use('/api', api);
 
 
