@@ -50,11 +50,11 @@ account.get('/current', requireAuth, function (req, res) {
     token: req.headers.authorization
   }).exec(function (err, user) {
     if(err) {
-      res.json({
-        email: user.email
-      });
+      res.json(err);
     } else {
-
+      res.json({
+        email: user.email,
+      });
     }
   });
 });
