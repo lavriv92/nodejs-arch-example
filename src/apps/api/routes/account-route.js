@@ -3,7 +3,7 @@ var express = require('express');
 var account = module.exports = express.Router();
 
 var User = require('../models/User.js');
-var generateToken = require('../../../utils').generateToken;
+var generateToken = require('../utils').generateToken;
 var requireAuth = require('../middlewares/require-auth');
 
 

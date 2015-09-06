@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var cryptPassword = require('../../../utils').cryptPassword;
+var cryptPassword = require('../utils').cryptPassword;
 
 var userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
