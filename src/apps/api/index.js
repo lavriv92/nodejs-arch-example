@@ -1,6 +1,6 @@
 var express = require('express');
 
-var account = require('./account');
+var account = require('./routes/account-route');
 
 var api = express.Router();
 

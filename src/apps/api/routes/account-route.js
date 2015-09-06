@@ -1,11 +1,10 @@
 var express = require('express');
 
-
 var account = module.exports = express.Router();
 
-var User = require('../../models/User.js');
-var generateToken = require('../../utils').generateToken;
-var requireAuth = require('./middlewares').requireAuth;
+var User = require('../models/User.js');
+var generateToken = require('../../../utils').generateToken;
+var requireAuth = require('../middlewares/require-auth');
 
 
 account.post('/email-login', function (req, res) {
@@ -22,7 +21,6 @@ account.post('/email-login', function (req, res) {
         var token = generateToken(user.email, user.password);
         user.token = token;
         user.save(function(err, user) {
-          req.session.user = user;
           res.json({ token: token });
         });
       }
@@ -48,5 +46,15 @@ account.post('/register', function (req, res) {
 
 
 account.get('/current', requireAuth, function (req, res) {
-  res.json(req.session.user);
+  User.findOne({
+    token: req.headers.authorization
+  }).exec(function (err, user) {
+    if(err) {
+      res.json({
+        email: user.email
+      });
+    } else {
+
+    }
+  });
 });

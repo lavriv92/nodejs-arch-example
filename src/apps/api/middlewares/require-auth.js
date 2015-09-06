@@ -1,5 +1,4 @@
-
-exports.requireAuth = function (req, res, next) {
+function requireAuth (req, res, next) {
   var unautorized = !req.session.user ||
                     req.headers.authorization !== req.session.user.token
   if(unautorized) {
@@ -10,3 +9,5 @@ exports.requireAuth = function (req, res, next) {
     next();
   }
 };
+
+module.exports = requireAuth;
