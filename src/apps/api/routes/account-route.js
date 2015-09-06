@@ -11,9 +11,9 @@ var requireAuth = require('../middlewares/require-auth');
 account.post('/email-login', function (req, res) {
   var body = req.body;
   User.findOne({ email: body.email }, {
-    email: 1,
-    password: 1,
-    token: 1
+    token: 0,
+    followers: 0,
+    followed: 0
   }).exec(function (err, user) {
     if(err)  {
       res.json(err);
@@ -22,7 +22,7 @@ account.post('/email-login', function (req, res) {
         var token = generateToken(user.email, user.password);
         user.token = token;
         user.save(function(err, user) {
-          res.json({ token: token });
+          res.json({ token: token, user: userPresenter(user) });
         });
       }
     }
@@ -35,25 +35,12 @@ account.post('/register', function (req, res) {
     if(err) {
       res.json(err);
     } else {
-      res.json({
-        _id: user._id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName
-      }, 201);
+      res.json(userPresenter(user), 201);
     }
   });
 });
 
 
 account.get('/current', requireAuth, function (req, res) {
-  User.findOne({
-    token: req.headers.authorization
-  }).exec(function (err, user) {
-    if(err) {
-      res.json(err);
-    } else {
-      res.json(userPresenter(user));
-    }
-  });
+  res.json(userPresenter(req.user));
 });
