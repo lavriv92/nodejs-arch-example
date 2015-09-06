@@ -5,6 +5,7 @@ module.exports = function UserPresenter (user) {
     email: user.email,
     firstName: user.firstName,
     lastName: user.lastName,
-    avatar: user.avatar
-  }
+    avatar: user.avatar,
+    address: user.address
+  };
 };

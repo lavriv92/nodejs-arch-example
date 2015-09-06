@@ -6,6 +6,10 @@ var userSchema = new mongoose.Schema({
   password: { type: String, required: true, set: cryptPassword },
   firstName: { type: String },
   lastName: { type: String },
+  address: {
+    city: { type: String, default: null },
+    street: { type: String, default: null }
+  },
   token: { type: String, default: null },
   avatar: { type: String, default: null },
 
