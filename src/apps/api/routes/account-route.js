@@ -45,6 +45,7 @@ account.get('/me', ensureAuth, function (req, res) {
   res.json(userPresenter(req.user));
 });
 
+
 account.get('/me/followers', ensureAuth, function (req, res) {
   res.json(req.user.followers);
 });

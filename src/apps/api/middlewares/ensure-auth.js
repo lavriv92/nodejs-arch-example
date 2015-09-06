@@ -7,8 +7,9 @@ function ensureAuth (req, res, next) {
       'message': 'Authentication failed '
     });
   } else {
-    User.findOne({
-      token: token
+    User.findOne({ token: token }, {
+      followed: 0,
+      followers: 0
     }).exec(function (err, user) {
       if(err) {
         res.json(err);
