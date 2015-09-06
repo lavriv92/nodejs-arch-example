@@ -2,7 +2,8 @@ var express = require('express');
 
 var account = module.exports = express.Router();
 
-var User = require('../models/User.js');
+var User = require('../models/user');
+var userPresenter = require('../presenters/user-presenter');
 var generateToken = require('../utils').generateToken;
 var requireAuth = require('../middlewares/require-auth');
 
@@ -52,9 +53,7 @@ account.get('/current', requireAuth, function (req, res) {
     if(err) {
       res.json(err);
     } else {
-      res.json({
-        email: user.email,
-      });
+      res.json(userPresenter(user));
     }
   });
 });
