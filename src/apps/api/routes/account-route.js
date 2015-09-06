@@ -5,7 +5,7 @@ var account = module.exports = express.Router();
 var User = require('../models/user');
 var userPresenter = require('../presenters/user-presenter');
 var generateToken = require('../utils').generateToken;
-var requireAuth = require('../middlewares/require-auth');
+var ensureAuth = require('../middlewares/ensure-auth');
 
 
 account.post('/email-login', function (req, res) {
@@ -41,6 +41,10 @@ account.post('/register', function (req, res) {
 });
 
 
-account.get('/current', requireAuth, function (req, res) {
+account.get('/me', ensureAuth, function (req, res) {
   res.json(userPresenter(req.user));
+});
+
+account.get('/me/followers', ensureAuth, function (req, res) {
+  res.json(req.user.followers);
 });
