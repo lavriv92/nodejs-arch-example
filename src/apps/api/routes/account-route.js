@@ -1,5 +1,6 @@
 var express = require('express');
 var co = require('co');
+var mongoose = require('mongoose');
 
 var account = module.exports = express.Router();
 
@@ -29,7 +30,7 @@ account.post('/email-login', function (req, res) {
         });
       }
     } catch (e) {
-      res.json(e);
+      res.json(e.message);
     }
   });
 });
@@ -41,7 +42,7 @@ account.post('/register', function (req, res) {
       var user = yield new User(req.body).save();
       res.json(userPresenter(user));
     } catch (e) {
-      res.json(e);
+      res.json(e.message);
     }
   });
 });
@@ -59,16 +60,24 @@ account.post('/follow', ensureAuth, function (req, res) {
   co(function *() {
     try {
       var followedUser = yield User.findOne({ _id: req.body.userId }).exec();
-      followedUser.followers.push(req.user._id);
-      followedUser = yield followedUser.save();
-      req.user.followed.push(followed._id);
-      var savedUser = yield req.user.save();
+      
+      followedUser = yield followedUser.update({ $push: {
+        followers: req.user._id
+      }}).exec();
+
+      var savedUser = yield req.user.update({ $push: {
+        followed: followedUser._id
+      }}).exec();
+
       res.json({
         success: true,
         followers: followedUser.followers
       });
     } catch (e) {
-      res.json(e);
+      console.log(e);
+      res.json({
+        message: e.message
+      });
     }
   });
 });

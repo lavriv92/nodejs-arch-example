@@ -15,7 +15,7 @@ function ensureAuth (req, res, next) {
         throw new Error();
       }
     } catch (e) {
-      res.status(403).json({ 'message': 'Authentication failed ' });
+      res.status(403).json(e.message);
     }
   });
 };

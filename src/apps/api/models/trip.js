@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 var tripSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true },
   creator: { type: ObjectId, ref: 'User'},
-  points: [{ type: ObjectId, ref: 'Point' }],
+  //points: [{ type: ObjectId, ref: 'Point' }],
   subscribers: [{ type: ObjectId, ref: 'User' }]
 });
 
