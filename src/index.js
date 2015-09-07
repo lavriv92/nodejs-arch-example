@@ -8,12 +8,11 @@ var api = require('./apps/api');
 
 mongoose.connect(config.db, function (err) {
   if(err) {
-    console.log(err);
+    throw err;
   }
 });
 
 var app = express();
-
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
