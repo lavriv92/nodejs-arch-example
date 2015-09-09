@@ -25,12 +25,12 @@ account.post('/email-login', function (req, res) {
           token: token
         });
       } else {
-        res.json({
-          message: 'Unauthorized'
-        });
+        throw new Error('User not found!!');
       }
     } catch (e) {
-      res.json(e.message);
+      res.json({
+        message: e.message
+      });
     }
   });
 });
@@ -60,24 +60,20 @@ account.post('/follow', ensureAuth, function (req, res) {
   co(function *() {
     try {
       var followedUser = yield User.findOne({ _id: req.body.userId }).exec();
-      
-      followedUser = yield followedUser.update({ $push: {
-        followers: req.user._id
-      }}).exec();
+      followedUser = yield User.update({ _id: followedUser._id }, {
+        $push: { followers: [req.user._id] }
+      }).exec();
 
-      var savedUser = yield req.user.update({ $push: {
-        followed: followedUser._id
-      }}).exec();
+      var savedUser = yield req.user.update({ _id: savedUser._id }, {
+        $push: { followed: [followedUser._id] }
+      }).exec();
 
       res.json({
         success: true,
         followers: followedUser.followers
       });
     } catch (e) {
-      console.log(e);
-      res.json({
-        message: e.message
-      });
+      res.json({ message: e.message });
     }
   });
 });
