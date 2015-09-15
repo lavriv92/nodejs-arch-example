@@ -21,7 +21,7 @@ var userSchema = new mongoose.Schema({
 });
 
 
-userSchema.methods.authenticate = function (password) {
+userSchema.methods.authenticate = (password) => {
   return this.password === cryptPassword(password);
 };
 

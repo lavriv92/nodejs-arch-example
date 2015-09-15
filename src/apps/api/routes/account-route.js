@@ -10,7 +10,7 @@ var generateToken = require('../utils').generateToken;
 var ensureAuth = require('../middlewares/ensure-auth');
 
 
-account.post('/email-login', function (req, res) {
+account.post('/email-login', (req, res) => {
   var body = req.body;
 
   co(function *() {
@@ -36,7 +36,7 @@ account.post('/email-login', function (req, res) {
 });
 
 
-account.post('/register', function (req, res) {
+account.post('/register', (req, res) => {
   co(function *() {
     try {
       var user = yield new User(req.body).save();
@@ -48,15 +48,15 @@ account.post('/register', function (req, res) {
 });
 
 
-account.get('/me', ensureAuth, function (req, res) {
+account.get('/me', ensureAuth, (req, res) => {
   res.json(userPresenter(req.user));
 });
 
-account.get('/me/followers', ensureAuth, function (req, res) {
+account.get('/me/followers', ensureAuth, (req, res) => {
   res.json(req.user.followers);
 });
 
-account.post('/follow', ensureAuth, function (req, res) {
+account.post('/follow', ensureAuth, (req, res) => {
   co(function *() {
     try {
       var followedUser = yield User.findOne({ _id: req.body.userId }).exec();

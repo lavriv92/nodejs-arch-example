@@ -2,7 +2,7 @@ var User = require('../models/user');
 var co = require('co');
 
 
-function ensureAuth (req, res, next) {
+module.exports = (req, res, next) => {
   var token = req.headers.authorization;
 
   co(function *() {
@@ -19,5 +19,3 @@ function ensureAuth (req, res, next) {
     }
   });
 };
-
-module.exports = ensureAuth;

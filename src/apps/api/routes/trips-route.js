@@ -7,7 +7,7 @@ var ensureAuth = require('../middlewares/ensure-auth');
 
 var trips = express.Router();
 
-trips.get('/', function (req, res) {
+trips.get('/', (req, res) => {
   var page = req.body.page || 1;
   co(function *() {
     try {
@@ -19,7 +19,7 @@ trips.get('/', function (req, res) {
   });
 });
 
-trips.post('/', ensureAuth, function (req, res) {
+trips.post('/', ensureAuth, (req, res) => {
   co(function *() {
     try {
       var trip = yield new Trip(req.body).save();
@@ -30,7 +30,7 @@ trips.post('/', ensureAuth, function (req, res) {
   });
 });
 
-trips.post('/subscribe', ensureAuth, function (req, res) {
+trips.post('/subscribe', ensureAuth, (req, res) => {
   co(function *() {
     try {
       var trip = yield Trip.findOne({ _id: req.body.tripId }).exec();
