@@ -42,7 +42,9 @@ account.post('/register', (req, res) => {
       var user = yield new User(req.body).save();
       res.json(userPresenter(user));
     } catch (e) {
-      res.json(e.message);
+      res.status(400).json({
+        message: e.message
+      });
     }
   });
 });
@@ -59,13 +61,14 @@ account.get('/me/followers', ensureAuth, (req, res) => {
 account.post('/follow', ensureAuth, (req, res) => {
   co(function *() {
     try {
-      var followedUser = yield User.findOne({ _id: req.body.userId }).exec();
-      followedUser = yield User.update({ _id: followedUser._id }, {
-        $push: { followers: [req.user._id] }
+      var followedUser = yield User.update({ _id: req.body.userId }, {
+        $push: { followers: req.user._id }
+      }, {
+        upsert: true
       }).exec();
 
-      var savedUser = yield req.user.update({ _id: savedUser._id }, {
-        $push: { followed: [followedUser._id] }
+      var savedUser = yield User.update({ _id: savedUser._id }, {
+        $push: { followed: followedUser._id }
       }).exec();
 
       res.json({
@@ -73,7 +76,7 @@ account.post('/follow', ensureAuth, (req, res) => {
         followers: followedUser.followers
       });
     } catch (e) {
-      res.json({ message: e.message });
+      res.status(400).json({ message: e.message });
     }
   });
 });
