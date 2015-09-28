@@ -3,7 +3,6 @@ var cryptPassword = require('../utils').cryptPassword;
 
 var ObjectId = mongoose.Types.ObjectId;
 
-
 var userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true, set: cryptPassword },
@@ -16,8 +15,8 @@ var userSchema = new mongoose.Schema({
   token: { type: String, default: null },
   avatar: { type: String, default: null },
 
-  followers: [{type: ObjectId, ref: 'User' }],
-  followed: [{type: ObjectId, ref: 'User' }]
+  followers: [{type: String, ref: 'User' }],
+  followed: [{type: String, ref: 'User' }]
 });
 
 

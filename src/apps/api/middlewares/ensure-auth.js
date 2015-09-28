@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
         req.user = user;
         next();
       } else {
-        throw new Error();
+        throw new Error("User is undefined");
       }
     } catch (e) {
       res.status(403).json(e.message);

@@ -10,12 +10,27 @@ var generateToken = require('../utils').generateToken;
 var ensureAuth = require('../middlewares/ensure-auth');
 
 
+account.get('/all', (req, res) => {
+  co(function *() {
+    try {
+      var users = User.find().exec();
+    } catch(e) {
+      res.status(500).json({
+        message: e.message
+      });
+    }
+  });
+});
+
+
 account.post('/email-login', (req, res) => {
   var body = req.body;
 
+  console.log(body);
+
   co(function *() {
     try {
-      var user = yield User.findOne({ email: req.body.email }).exec();
+      var user = yield User.findOne({ email: body.email }).exec();
       if(user && user.authenticate(body.password)) {
         var token = generateToken(user.email, user.password);
         user.token = token;
@@ -25,10 +40,10 @@ account.post('/email-login', (req, res) => {
           token: token
         });
       } else {
-        throw new Error('User not found!!');
+        throw new Error('User not found!! or password failed');
       }
     } catch (e) {
-      res.json({
+      res.status(403).json({
         message: e.message
       });
     }
@@ -49,13 +64,75 @@ account.post('/register', (req, res) => {
   });
 });
 
-
-account.get('/me', ensureAuth, (req, res) => {
-  res.json(userPresenter(req.user));
+account.put('/update', ensureAuth, (req, res) => {
+  co(function *() {
+    try {
+      var user = yield User.update({_id: req.user._id}, req.data).exec();
+      var user = yield User.findOne({_id: req.user._id }).exec();
+      console.log(user);
+      res.json(userPresenter(user));
+    } catch (e) {
+      res.status(400).json({
+        message: e.message
+      });
+    }
+  });
 });
 
-account.get('/me/followers', ensureAuth, (req, res) => {
-  res.json(req.user.followers);
+account.put('/update-password', ensureAuth, function () {
+  co(function *() {
+    try {
+      if(req.body.newPassword === req.body.newPasswordConfirm) {
+        var result = yield User.update({_id: req.user._id}, {
+          password: req.body.newPassword
+        }).exec();
+        res.json(res);
+      } else {
+        throw new Error('Old password doe`s not equal new password');
+      }
+    } catch (e) {
+      res.status(400).json({
+        message: e.message
+      })
+    };
+  });
+});
+
+account.get('/followed', ensureAuth, (req, res) => {
+  co(function *() {
+    try {
+      var user = yield User.findOne({
+        _id: req.user._id
+      }).populate('followed').exec();
+      var result = yield user.followed.map((u) => {
+        return userPresenter(u);
+      });
+      res.json(result);
+    } catch(e) {
+      res.status(500).json({
+        message: e.message
+      })
+    }
+
+  });
+});
+
+account.get('/followers', ensureAuth, (req, res) => {
+  co(function *() {
+    try {
+      var user = User.findOne({
+        _id: req.user._id
+      }).populate('followers').exec();
+      var result = yield user.followers.map((u) => {
+        return userPresenter(u);
+      });
+      res.json(result);
+    } catch(e) {
+      res.status(500).json({
+        message: e.message
+      });
+    }
+  });
 });
 
 account.post('/follow', ensureAuth, (req, res) => {
@@ -67,8 +144,10 @@ account.post('/follow', ensureAuth, (req, res) => {
         upsert: true
       }).exec();
 
-      var savedUser = yield User.update({ _id: savedUser._id }, {
-        $push: { followed: followedUser._id }
+      var savedUser = yield User.update({ _id: req.user._id }, {
+        $push: { followed: req.body.userId }
+      }, {
+        upsert: true
       }).exec();
 
       res.json({
