@@ -49,12 +49,28 @@ trips.post('/', ensureAuth, (req, res) => {
 trips.post('/subscribe', ensureAuth, (req, res) => {
   co(function *() {
     try {
-      var trip = yield Trip.update({ _id: req.body.tripId }, {
-        $push: { subscribers: req.user._id }
+      var trip = yield Trip.updata({_id: req.body.tripId }, {
+        $push: {subscribers: subscriberId}
       }).exec();
-      res.json({ success: true });
+
+      var trip = Trip.findOne({ _id: req.body.tripId }).exec();
+      res.json(trip);
     } catch(e) {
-      res.json(e);
+      res.json({
+        message: e.message
+      });
+    }
+  });
+});
+
+trips.post('/unsubscribe', ensureAuth, (req, res) => {
+  co(function *() {
+    try {
+      
+    } catch (e) {
+      res.json({
+        message: e.message
+      });
     }
   });
 });
